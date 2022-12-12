@@ -1,30 +1,35 @@
 use hashbrown::HashMap;
 
-pub struct Zap<'a> {
-    store: HashMap<&'a str, &'a str>,
+#[derive(Debug, Clone)]
+pub struct Zap {
+    store: HashMap<String, String>,
 }
 
-impl<'a> Zap<'a> {
-    pub fn new() -> Zap<'a> {
+impl Zap {
+    pub fn new() -> Zap {
         Zap {
             store: HashMap::new(),
         }
     }
 
-    pub fn set(&mut self, key: &'a str, value: &'a str) {
+    pub fn set(&mut self, key: String, value: String) {
         self.store.insert(key, value);
     }
 
     pub fn get(&self, key: &str) -> Option<String> {
-        self.store.get(key).map(|&v| v.to_string())
+        self.store.get(key).map(|v| v.to_string())
     }
 
-    pub fn has(&self, key: &'a str) -> bool {
-        self.store.contains_key(key)
+    pub fn has(&self, key: String) -> bool {
+        self.store.contains_key(&key)
     }
 
-    pub fn delete(&mut self, key: &'a str) {
-        self.store.remove(key);
+    pub fn delete(&mut self, key: String) {
+        self.store.remove(&key);
+    }
+
+    pub fn list(&self) -> impl Iterator<Item = (&String, &String)> {
+        self.store.iter()
     }
 }
 
@@ -36,7 +41,7 @@ mod tests {
     #[test]
     fn test_set_and_get() {
         let mut zap = Zap::new();
-        zap.set("name", "John");
+        zap.set("name".to_string(), "John".to_string());
         assert_eq!(zap.get("name"), Some("John".to_string()));
     }
 
@@ -44,16 +49,16 @@ mod tests {
     #[test]
     fn test_has() {
         let mut zap = Zap::new();
-        zap.set("name", "John");
-        assert_eq!(zap.has("name"), true);
+        zap.set("name".to_string(), "John".to_string());
+        assert_eq!(zap.has("name".to_string()), true);
     }
 
     // test delete
     #[test]
     fn test_delete() {
         let mut zap = Zap::new();
-        zap.set("name", "John");
-        zap.delete("name");
-        assert_eq!(zap.has("name"), false);
+        zap.set("name".to_string(), "John".to_string());
+        zap.delete("name".to_string());
+        assert_eq!(zap.has("name".to_string()), false);
     }
 }

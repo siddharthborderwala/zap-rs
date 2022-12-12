@@ -2,4 +2,5 @@
 
 members = [
   "zap_core",
+  "zap_server"
 ]
