@@ -55,10 +55,11 @@ async fn ping() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     let env = Env::new().default_filter_or("info");
     env_logger::init_from_env(env);
+    let zapper = web::Data::new(state::ZapActor::new().start());
 
     HttpServer::new(move || {
         App::new()
-            .app_data(web::Data::new(state::ZapActor::new().start()))
+            .app_data(zapper.clone())
             .service(get)
             .service(set)
             .service(has)
